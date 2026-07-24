@@ -3,255 +3,681 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>下一站去哪裡？一番賞抽籤</title>
+  <title>嘉義隨性漫遊 7/25 - 7/26</title>
   <style>
     :root {
-      --primary: #ff4757;
-      --bg: #f1f2f6;
-      --card-bg: #ffffff;
+      --bg-color: #f4f1ea;          /* 柔和沙灘暖灰背景 */
+      --card-bg: #fdfcf7;           /* 暖白卡片底色 */
+      --text-main: #38342e;         /* 深灰褐內文 */
+      --text-muted: #7d7568;        /* 灰褐色次要字 */
+      --accent-sage: #8a9a86;       /* 鼠尾草綠 */
+      --accent-terracotta: #c28d75; /* 磚橙褐 */
+      --border-color: #e5dfd3;     /* 淡邊框 */
+      --shadow: 0 4px 15px rgba(56, 52, 46, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background-color: var(--bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang TC", "Noto Sans TC", sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
       margin: 0;
-      padding: 20px;
+      padding: 24px 16px 40px 16px;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
-      box-sizing: border-box;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 24px;
+      width: 100%;
+      max-width: 480px;
+    }
+
+    .subtitle-tag {
+      display: inline-block;
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      color: var(--accent-terracotta);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 6px;
     }
 
     h1 {
-      color: #2f3542;
-      font-size: 1.5rem;
-      margin-bottom: 5px;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 0 0 8px 0;
+      color: var(--text-main);
+      letter-spacing: 0.5px;
     }
 
-    p.subtitle {
-      color: #747d8c;
-      font-size: 0.9rem;
-      margin-top: 0;
+    p.desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    /* 天數分頁切換卡片 */
+    .day-tabs {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 480px;
       margin-bottom: 20px;
     }
 
-    .btn {
-      background-color: var(--primary);
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .tab-btn.active {
+      background-color: var(--accent-sage);
+      color: #ffffff;
+      border-color: var(--accent-sage);
+    }
+
+    /* 時間軸區域 */
+    .timeline {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      padding-left: 20px;
+      margin-bottom: 30px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 15px;
+      bottom: 15px;
+      width: 2px;
+      background-color: var(--border-color);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -20px;
+      top: 18px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--accent-terracotta);
+      border: 3px solid var(--bg-color);
+    }
+
+    .node-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .node-time {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--accent-terracotta);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .node-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0 0 6px 0;
+      color: var(--text-main);
+    }
+
+    .node-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0 0 12px 0;
+      line-height: 1.4;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-map {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-next {
+      background-color: var(--accent-sage);
+      color: #ffffff;
+      margin-top: 8px;
+    }
+
+    /* Modal 彈窗區域 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(56, 52, 46, 0.4);
+      backdrop-filter: blur(4px);
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 500px;
+      max-height: 85vh;
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      padding: 24px 20px;
+      overflow-y: auto;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* 選項庫勾選區域 */
+    .pool-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .pool-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 14px;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      background: var(--bg-color);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .pool-item.selected {
+      border-color: var(--accent-sage);
+      background: #f1f5f0;
+    }
+
+    .pool-checkbox {
+      width: 18px;
+      height: 18px;
+      margin-right: 12px;
+      accent-color: var(--accent-sage);
+    }
+
+    .pool-info {
+      flex: 1;
+    }
+
+    .pool-name {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .pool-cat {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .start-draw-btn {
+      background-color: var(--accent-terracotta);
       color: white;
       border: none;
-      padding: 12px 24px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
       font-size: 1rem;
-      font-weight: bold;
-      border-radius: 25px;
+      font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
-      transition: transform 0.1s, background-color 0.2s;
-      margin-bottom: 25px;
+      box-shadow: 0 4px 12px rgba(194, 141, 117, 0.3);
     }
 
-    .btn:active {
-      transform: scale(0.95);
+    .start-draw-btn:disabled {
+      background-color: #d1c9bd;
+      box-shadow: none;
+      cursor: not-allowed;
     }
 
-    /* 籤盒區域 */
+    /* 一番賞抽籤區域 */
     .ticket-container {
       display: flex;
-      gap: 15px;
+      gap: 12px;
       justify-content: center;
-      flex-wrap: wrap;
-      width: 100%;
-      max-width: 400px;
+      margin: 20px 0;
     }
 
-    /* 一番賞籤卡 */
     .ticket {
-      width: 100px;
-      height: 140px;
-      background: linear-gradient(135deg, #ff6b81, #ff4757);
-      border: 3px solid #ffffff;
+      flex: 1;
+      height: 130px;
+      background: linear-gradient(135deg, #d8bcab, #c28d75);
       border-radius: 12px;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       color: white;
-      font-weight: bold;
+      font-weight: 700;
       cursor: pointer;
-      position: relative;
-      transition: transform 0.3s, box-shadow 0.3s;
+      transition: transform 0.2s, filter 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
       user-select: none;
     }
 
-    .ticket:hover {
-      transform: translateY(-5px);
-    }
-
-    .ticket .label {
-      font-size: 1.2rem;
-      letter-spacing: 2px;
-    }
-
-    .ticket .hint {
-      font-size: 0.75rem;
-      opacity: 0.8;
-      margin-top: 8px;
-    }
-
-    /* 抽中/翻牌後的樣式 */
     .ticket.opened {
-      background: #ffffff;
-      color: #2f3542;
-      border: 3px solid #2ed573;
-      transform: scale(1.05);
-      cursor: default;
+      background: var(--card-bg);
+      border: 2px solid var(--accent-sage);
+      color: var(--text-main);
+      transform: scale(1.02);
     }
 
-    /* 未被選中的籤變暗 */
     .ticket.disabled {
-      opacity: 0.4;
-      filter: grayscale(80%);
-      cursor: not-allowed;
+      opacity: 0.35;
+      filter: grayscale(100%);
       transform: scale(0.95);
+      cursor: not-allowed;
     }
 
-    /* 結果彈窗/卡片 */
-    .result-card {
-      margin-top: 25px;
-      background: white;
-      padding: 20px;
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    .result-box {
+      margin-top: 20px;
+      padding: 16px;
+      background: var(--bg-color);
+      border-radius: 12px;
       text-align: center;
-      width: 100%;
-      max-width: 320px;
+      border: 1px dashed var(--accent-sage);
       display: none;
-      box-sizing: border-box;
-      animation: fadeIn 0.4s ease-out;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .result-card h2 {
-      margin: 0 0 10px 0;
-      color: #ff4757;
-      font-size: 1.4rem;
-    }
-
-    .result-card p {
-      color: #57606f;
-      margin: 5px 0 15px 0;
-    }
-
-    .map-btn {
-      display: inline-block;
-      background-color: #1e90ff;
-      color: white;
-      text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: bold;
-      font-size: 0.9rem;
+    .result-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent-sage);
+      margin-bottom: 6px;
     }
   </style>
 </head>
 <body>
 
-  <h1>🎫 命運一番賞</h1>
-  <p class="subtitle">先生成候選籤，再叫朋友親自手動選一張！</p>
+  <header>
+    <span class="subtitle-tag">Chiayi Trip</span>
+    <h1>嘉義隨性漫遊 🌿</h1>
+    <p class="desc">7/25 (六) － 7/26 (日)</p>
+  </header>
 
-  <button class="btn" onclick="prepareTickets()">🎲 重新抽 3 個地點放入籤盒</button>
-
-  <!-- 籤盒區域 -->
-  <div class="ticket-container" id="ticketContainer">
-    <!-- 籤牌會由 JS 動態產生 -->
+  <!-- 天數切換按鈕 -->
+  <div class="day-tabs">
+    <div class="tab-btn active" onclick="switchDay(1)">DAY 1 (7/25)</div>
+    <div class="tab-btn" onclick="switchDay(2)">DAY 2 (7/26)</div>
   </div>
 
-  <!-- 揭曉結果區 -->
-  <div class="result-card" id="resultCard">
-    <span style="font-size: 2rem;">🎉</span>
-    <h2 id="placeName">景點名稱</h2>
-    <p id="placeCategory">類別</p>
-    <a id="mapLink" href="#" target="_blank" class="map-btn">📍 開啟 Google Maps 出發</a>
+  <!-- 行程時間軸 -->
+  <div class="timeline" id="timelineContainer">
+    <!-- 由 JS 動態渲染行程點 -->
+  </div>
+
+  <!-- 彈窗：選擇候選地點與一番賞 -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">選擇 2~3 個候選地點</div>
+        <button class="close-btn" onclick="closeModal()">×</button>
+      </div>
+
+      <!-- 階段 1：選擇候選地點 -->
+      <div id="stepSelect">
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
+          請勾選 2 到 3 個想去的候選地點包進一番賞！
+        </p>
+        <div class="pool-list" id="poolList">
+          <!-- 候選列表 -->
+        </div>
+        <button class="start-draw-btn" id="confirmPoolBtn" disabled onclick="goToDrawStep()">
+          確定選項，製作一番賞籤包 (0/3)
+        </button>
+      </div>
+
+      <!-- 階段 2：一番賞手動抽籤 -->
+      <div id="stepDraw" style="display: none;">
+        <p style="font-size: 0.85rem; color: var(--text-muted); text-align: center;">
+          籤盒已洗牌完成！請讓朋友親自點擊一張籤：
+        </p>
+        <div class="ticket-container" id="ticketContainer">
+          <!-- 籤牌 -->
+        </div>
+
+        <div class="result-box" id="resultBox">
+          <div class="result-title" id="resName">景點名稱</div>
+          <p id="resCat" style="font-size: 0.82rem; color: var(--text-muted); margin: 0 0 12px 0;">類別</p>
+          <a id="resMap" href="#" target="_blank" class="action-btn btn-map" style="background: white;">📍 開啟 Google Maps 導航</a>
+          <button class="action-btn btn-next" style="margin-top: 8px;" onclick="addResultToSchedule()">✨ 將此站加入今日行程</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 
   <script>
-    // 1. 你的景點資料庫（隨時可以在這裡增加地點）
-    const pool = [
-      { name: "九份老街", category: "🍡 美食 / 景觀", map: "https://www.google.com/maps/search/?api=1&query=九份老街" },
-      { name: "中山站商圈", category: "🛍️ 逛街 / 咖啡廳", map: "https://www.google.com/maps/search/?api=1&query=捷運中山站" },
-      { name: "象山六巨石", category: "⛰️ 戶外 / 看夜景", map: "https://www.google.com/maps/search/?api=1&query=象山步道" },
-      { name: "華山文創園區", category: "🎨 展覽 / 散步", map: "https://www.google.com/maps/search/?api=1&query=華山1914文化創意產業園區" },
-      { name: "松山文創園區", category: "☕ 誠品 / 逛街", map: "https://www.google.com/maps/search/?api=1&query=松山文創園區" },
-      { name: "淡水漁人碼頭", category: "🌅 夕陽 / 海邊", map: "https://www.google.com/maps/search/?api=1&query=淡水漁人碼頭" }
+    // 1. 固定行程數據
+    let day1Schedule = [
+      { time: "13:30", name: "渝川", desc: "第一站美味聚餐點", map: "https://www.google.com/maps/search/?api=1&query=渝川嘉義" }
     ];
 
-    let currentCandidates = [];
-    let isOpened = false;
+    let day2Schedule = [
+      { time: "11:00", name: "海森", desc: "第二天早午餐 / 聚餐地點", map: "https://www.google.com/maps/search/?api=1&query=海森嘉義" }
+    ];
 
-    // 準備一番賞籤盒 (隨機抓 3 個並洗牌)
-    function prepareTickets() {
-      isOpened = false;
-      document.getElementById('resultCard').style.display = 'none';
+    // DAY 2 固定壓軸（海之夏煙火）
+    const day2Final = {
+      time: "NIGHT",
+      name: "東石海之夏 🎆",
+      desc: "壓軸夜間行程：東石漁人碼頭看煙火演出",
+      map: "https://www.google.com/maps/search/?api=1&query=東石漁人碼頭"
+    };
 
-      // 隨機從水池抓 3 個不重複景點
-      const shuffled = [...pool].sort(() => 0.5 - Math.random());
-      currentCandidates = shuffled.slice(0, 3);
+    // 2. 嘉義專屬完整選項庫（Option Pool）
+    const placesPool = [
+      // 正餐
+      { name: "林聰明沙鍋魚頭", category: "🍲 正餐 / 嘉義必吃排隊美食", map: "https://www.google.com/maps/search/?api=1&query=林聰明沙鍋魚頭" },
+      { name: "崇文錦魯麵（崇文涼麵）", category: "🍜 正餐 / 在地傳統美鮮涼麵", map: "https://www.google.com/maps/search/?api=1&query=崇文錦魯麵" },
+      
+      // 咖啡廳
+      { name: "Mimico Coffee 明明珈琲", category: "☕ 咖啡廳 / 質感風格咖啡", map: "https://www.google.com/maps/search/?api=1&query=Mimico+Coffee+明明珈琲" },
+      { name: "曙光咖啡 Dawn Coffee", category: "☕ 咖啡廳 / 手沖特調咖啡", map: "https://www.google.com/maps/search/?api=1&query=曙光咖啡+Dawn+Coffee" },
+      { name: "新華美西裝社", category: "☕ 咖啡廳 / 復古老宅甜點茶屋", map: "https://www.google.com/maps/search/?api=1&query=新華美西裝社" },
 
-      const container = document.getElementById('ticketContainer');
+      // 點心
+      { name: "仁芝初", category: "🍡 點心 / 手作麻糬甜品", map: "https://www.google.com/maps/search/?api=1&query=仁芝初嘉義" },
+      { name: "吳記排骨酥", category: "🍗 點心 / 文化路人氣香酥排骨酥", map: "https://www.google.com/maps/search/?api=1&query=吳記排骨酥嘉義" },
+
+      // 景點
+      { name: "嘉義市立美術館", category: "🏛️ 景點 / 藝術復古建築散步", map: "https://www.google.com/maps/search/?api=1&query=嘉義市立美術館" },
+      { name: "咩咩上樹萌寵樂園", category: "🦙 景點 / 親近可愛小動物", map: "https://www.google.com/maps/search/?api=1&query=咩咩上樹萌寵樂園" },
+      { name: "國立故宮博物院南部院區", category: "🏺 景點 / 故宮南院展覽散步", map: "https://www.google.com/maps/search/?api=1&query=故宮南院" },
+      { name: "旺萊山鳳梨文化園區", category: "🍍 景點 / 觀光園區免費品嚐鳳梨酥", map: "https://www.google.com/maps/search/?api=1&query=旺萊山鳳梨文化園區" },
+
+      // 逛街
+      { name: "小獵犬商號 Beagle & Co.", category: "🛍️ 逛街 / 質感生活雜貨選物店", map: "https://www.google.com/maps/search/?api=1&query=小獵犬商號" },
+      { name: "JxAcces", category: "💍 逛街 / 飾品配件選品店", map: "https://www.google.com/maps/search/?api=1&query=JxAcces嘉義" },
+      { name: "文化路觀光夜市", category: "🌙 逛街 / 熱鬧宵夜逛街夜市", map: "https://www.google.com/maps/search/?api=1&query=文化路夜市" }
+    ];
+
+    let currentDay = 1;
+    let selectedIndices = [];
+    let chosenTicketItems = [];
+    let currentDrawnResult = null;
+
+    // 切換天數
+    function switchDay(day) {
+      currentDay = day;
+      document.querySelectorAll('.tab-btn').forEach((btn, idx) => {
+        btn.classList.toggle('active', idx + 1 === day);
+      });
+      renderTimeline();
+    }
+
+    // 渲染行程時間軸
+    function renderTimeline() {
+      const container = document.getElementById('timelineContainer');
       container.innerHTML = '';
 
-      // 渲染 3 張蓋著的籤
-      currentCandidates.forEach((item, index) => {
+      const currentSchedule = currentDay === 1 ? day1Schedule : day2Schedule;
+
+      // 渲染已排定站點
+      currentSchedule.forEach((item) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'timeline-item';
+        itemEl.innerHTML = `
+          <div class="timeline-dot"></div>
+          <div class="node-card">
+            <div class="node-time">${item.time}</div>
+            <h3 class="node-title">${item.name}</h3>
+            <p class="node-desc">${item.desc}</p>
+            <a href="${item.map}" target="_blank" class="action-btn btn-map">📍 Google 地圖</a>
+          </div>
+        `;
+        container.appendChild(itemEl);
+      });
+
+      // 抽籤按鈕卡片
+      const nextEl = document.createElement('div');
+      nextEl.className = 'timeline-item';
+      nextEl.innerHTML = `
+        <div class="timeline-dot" style="background-color: var(--accent-sage);"></div>
+        <div class="node-card" style="border: 2px dashed var(--accent-sage); text-align: center; background: transparent;">
+          <h3 class="node-title" style="color: var(--accent-sage); margin-bottom: 4px;">🎲 下一站去哪裡？</h3>
+          <p class="node-desc">點擊從選項庫選擇 2~3 個地點抽一番賞！</p>
+          <button class="action-btn btn-next" onclick="openPickerModal()">✨ 開始挑選選項抽籤</button>
+        </div>
+      `;
+      container.appendChild(nextEl);
+
+      // 如果是 DAY 2，最後固定加上東石海之夏煙火卡片
+      if (currentDay === 2) {
+        const finalEl = document.createElement('div');
+        finalEl.className = 'timeline-item';
+        finalEl.innerHTML = `
+          <div class="timeline-dot" style="background-color: #5a6b7c;"></div>
+          <div class="node-card" style="border-left: 4px solid #5a6b7c;">
+            <div class="node-time" style="color: #5a6b7c;">${day2Final.time}</div>
+            <h3 class="node-title">${day2Final.name}</h3>
+            <p class="node-desc">${day2Final.desc}</p>
+            <a href="${day2Final.map}" target="_blank" class="action-btn btn-map">📍 Google 地圖導航</a>
+          </div>
+        `;
+        container.appendChild(finalEl);
+      }
+    }
+
+    // 開啟彈窗並渲染備選庫
+    function openPickerModal() {
+      selectedIndices = [];
+      document.getElementById('stepSelect').style.display = 'block';
+      document.getElementById('stepDraw').style.display = 'none';
+      document.getElementById('modalOverlay').classList.add('active');
+
+      const poolList = document.getElementById('poolList');
+      poolList.innerHTML = '';
+
+      placesPool.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = 'pool-item';
+        div.id = `pool-item-${idx}`;
+        div.onclick = () => toggleSelectPool(idx);
+
+        div.innerHTML = `
+          <input type="checkbox" class="pool-checkbox" id="chk-${idx}" readonly>
+          <div class="pool-info">
+            <div class="pool-name">${item.name}</div>
+            <div class="pool-cat">${item.category}</div>
+          </div>
+        `;
+        poolList.appendChild(div);
+      });
+
+      updateConfirmBtn();
+    }
+
+    // 勾選/取消勾選備選地點
+    function toggleSelectPool(idx) {
+      const pos = selectedIndices.indexOf(idx);
+      if (pos > -1) {
+        selectedIndices.splice(pos, 1);
+      } else {
+        if (selectedIndices.length >= 3) {
+          alert('最多選擇 3 個候選地點喔！');
+          return;
+        }
+        selectedIndices.push(idx);
+      }
+
+      placesPool.forEach((_, i) => {
+        const itemEl = document.getElementById(`pool-item-${i}`);
+        const chk = document.getElementById(`chk-${i}`);
+        const isSelected = selectedIndices.includes(i);
+        itemEl.classList.toggle('selected', isSelected);
+        chk.checked = isSelected;
+      });
+
+      updateConfirmBtn();
+    }
+
+    function updateConfirmBtn() {
+      const btn = document.getElementById('confirmPoolBtn');
+      const count = selectedIndices.length;
+      btn.innerText = `確定選項，製作一番賞籤包 (${count}/3)`;
+      btn.disabled = count < 2;
+    }
+
+    function closeModal() {
+      document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    // 進入一番賞抽籤階段
+    function goToDrawStep() {
+      document.getElementById('stepSelect').style.display = 'none';
+      document.getElementById('stepDraw').style.display = 'block';
+      document.getElementById('resultBox').style.display = 'none';
+
+      const selectedItems = selectedIndices.map(i => placesPool[i]);
+      chosenTicketItems = [...selectedItems].sort(() => 0.5 - Math.random());
+
+      const ticketContainer = document.getElementById('ticketContainer');
+      ticketContainer.innerHTML = '';
+
+      chosenTicketItems.forEach((_, idx) => {
         const ticket = document.createElement('div');
         ticket.className = 'ticket';
-        ticket.id = `ticket-${index}`;
-        ticket.onclick = () => openTicket(index);
-        
+        ticket.id = `ticket-${idx}`;
+        ticket.onclick = () => openTicket(idx);
         ticket.innerHTML = `
-          <div class="label">籤 ${String.fromCharCode(65 + index)}</div>
-          <div class="hint">點擊撕開</div>
+          <div style="font-size: 1.1rem; letter-spacing: 1px;">籤 ${String.fromCharCode(65 + idx)}</div>
+          <div style="font-size: 0.72rem; opacity: 0.85; margin-top: 4px;">點擊撕開</div>
         `;
-        container.appendChild(ticket);
+        ticketContainer.appendChild(ticket);
       });
     }
 
-    // 點擊撕開一番賞
+    // 手動撕開一番賞
     function openTicket(selectedIndex) {
-      if (isOpened) return; // 抽過了就不能再點
-      isOpened = true;
+      currentDrawnResult = chosenTicketItems[selectedIndex];
 
-      const chosen = currentCandidates[selectedIndex];
-
-      // 處理卡片視覺變化
-      currentCandidates.forEach((_, index) => {
-        const el = document.getElementById(`ticket-${index}`);
-        if (index === selectedIndex) {
+      chosenTicketItems.forEach((item, idx) => {
+        const el = document.getElementById(`ticket-${idx}`);
+        if (idx === selectedIndex) {
           el.classList.add('opened');
           el.innerHTML = `
-            <div style="font-size: 0.8rem; color: #2ed573;">中獎！</div>
-            <div style="font-size: 1.1rem; margin-top: 5px;">${chosen.name}</div>
+            <div style="font-size: 0.75rem; color: var(--accent-sage);">首選景點</div>
+            <div style="font-size: 0.95rem; margin-top: 4px;">${item.name}</div>
           `;
         } else {
           el.classList.add('disabled');
         }
       });
 
-      // 顯示底部結果區
       setTimeout(() => {
-        document.getElementById('placeName').innerText = chosen.name;
-        document.getElementById('placeCategory').innerText = chosen.category;
-        document.getElementById('mapLink').href = chosen.map;
-        document.getElementById('resultCard').style.display = 'block';
-      }, 300);
+        document.getElementById('resName').innerText = currentDrawnResult.name;
+        document.getElementById('resCat').innerText = currentDrawnResult.category;
+        document.getElementById('resMap').href = currentDrawnResult.map;
+        document.getElementById('resultBox').style.display = 'block';
+      }, 200);
     }
 
-    // 初次載入自動生成
-    prepareTickets();
+    // 新增抽中景點至行程
+    function addResultToSchedule() {
+      if (!currentDrawnResult) return;
+
+      const schedule = currentDay === 1 ? day1Schedule : day2Schedule;
+      schedule.push({
+        time: "NEXT",
+        name: currentDrawnResult.name,
+        desc: currentDrawnResult.category,
+        map: currentDrawnResult.map
+      });
+
+      closeModal();
+      renderTimeline();
+    }
+
+    // 初始化載入 DAY 1
+    renderTimeline();
   </script>
 </body>
 </html>
