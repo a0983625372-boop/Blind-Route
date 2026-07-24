@@ -3,81 +3,122 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blind-Route 盲盒行程</title>
+  <title>嘉義盲盒行程抽籤器</title>
   <style>
     :root {
-      --primary-color: #f7a072;
+      --primary: #f7a072;
       --primary-hover: #f58a4b;
-      --bg-color: #fff9f5;
+      --bg: #fff9f5;
       --card-bg: #ffffff;
-      --text-color: #4a3e3d;
+      --text: #4a3e3d;
       --text-muted: #8c7b75;
-      --accent-color: #f3c292;
-      --danger-color: #e76f51;
-      --border-color: #f3e5dc;
+      --border: #f3e5dc;
+      --accent: #fff2e6;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-color);
+      background-color: var(--bg);
+      color: var(--text);
       display: flex;
       justify-content: center;
+      padding: 20px 12px;
       min-height: 100vh;
-      padding: 20px;
     }
 
     .container {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       background: var(--card-bg);
       border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(230, 160, 120, 0.15);
-      padding: 24px;
+      box-shadow: 0 8px 24px rgba(230, 160, 120, 0.15);
+      padding: 20px;
       display: flex;
       flex-direction: column;
-      position: relative;
-    }
-
-    .page {
-      display: none;
-      flex-direction: column;
-      height: 100%;
-    }
-
-    .page.active {
-      display: flex;
     }
 
     h1 {
-      font-size: 24px;
+      font-size: 22px;
       color: #d96b27;
       text-align: center;
-      margin-bottom: 8px;
-    }
-
-    h2 {
-      font-size: 20px;
-      color: #d96b27;
       margin-bottom: 16px;
-      text-align: center;
     }
 
-    .subtitle {
-      font-size: 14px;
-      color: var(--text-muted);
-      text-align: center;
+    /* 日期頁籤 */
+    .date-tabs {
+      display: flex;
+      gap: 10px;
       margin-bottom: 20px;
     }
 
-    .btn {
-      background-color: var(--primary-color);
+    .tab-btn {
+      flex: 1;
+      padding: 12px;
+      background: #f5e9e2;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* 行程時間軸 */
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .node {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .node-title {
+      font-size: 15px;
+      font-weight: bold;
+    }
+
+    .node-tag {
+      font-size: 11px;
+      background: #fce1d1;
+      color: #d96b27;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-right: 6px;
+    }
+
+    .btn-map {
+      background-color: #f4a261;
+      color: white;
+      text-decoration: none;
+      padding: 4px 8px;
+      font-size: 11px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+
+    .btn-draw {
+      background-color: var(--primary);
       color: white;
       border: none;
       padding: 14px;
@@ -86,358 +127,285 @@
       font-weight: bold;
       cursor: pointer;
       width: 100%;
-      transition: background-color 0.2s, transform 0.1s;
       margin-top: 10px;
     }
 
-    .btn:hover {
+    .btn-draw:hover {
       background-color: var(--primary-hover);
     }
 
-    .btn:active {
-      transform: scale(0.98);
+    /* Modal 彈出視窗（挑選庫） */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 100;
     }
 
-    .btn-small {
-      padding: 4px 8px;
-      font-size: 11px;
-      border-radius: 6px;
-      width: auto;
-      margin-top: 0;
-      text-decoration: none;
-      display: inline-block;
+    .modal.active {
+      display: flex;
     }
 
-    .btn-nav {
-      background-color: #f4a261;
-      color: white;
+    .modal-content {
+      background: white;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 440px;
+      max-height: 85vh;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
 
-    .btn-delete {
-      background-color: var(--danger-color);
-      color: white;
-    }
-
-    /* 主頁樣式 */
-    .draw-section {
+    .modal-header {
+      font-size: 18px;
+      font-weight: bold;
+      color: #d96b27;
       text-align: center;
-      margin: 40px 0;
+      margin-bottom: 12px;
     }
 
-    .list-title {
-      font-weight: bold;
-      margin-bottom: 10px;
-      color: var(--text-color);
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 6px;
-    }
-
-    .selected-list {
-      list-style: none;
-      margin-bottom: 20px;
-    }
-
-    .selected-item {
-      background-color: var(--bg-color);
-      padding: 10px 14px;
-      border-radius: 10px;
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border: 1px solid var(--border-color);
-    }
-
-    .item-info {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 2px;
-    }
-
-    .item-name {
-      font-weight: bold;
-      font-size: 15px;
-    }
-
-    .item-hours {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .item-actions {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-
-    /* 選擇地點頁面 */
-    .category-title {
-      font-size: 16px;
-      font-weight: bold;
-      color: #333;
-      background-color: #fff2e6;
-      padding: 6px 12px;
-      border-radius: 8px;
-      margin: 16px 0 10px 0;
-    }
-
-    .options-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-height: 420px;
+    .options-scroll {
       overflow-y: auto;
       padding-right: 4px;
-      margin-bottom: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cat-title {
+      font-size: 14px;
+      font-weight: bold;
+      background: var(--accent);
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: #333;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 6px;
     }
 
     .option-card {
-      border: 2px solid var(--border-color);
-      border-radius: 12px;
-      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 14px;
       cursor: pointer;
-      transition: all 0.2s;
-      background-color: #fff;
+      text-align: center;
+      background: #fff;
     }
 
     .option-card.selected {
-      border-color: var(--primary-color);
+      border-color: var(--primary);
       background-color: #fff5ee;
-    }
-
-    .option-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-
-    .option-name {
       font-weight: bold;
-      font-size: 15px;
-    }
-
-    .option-desc {
-      font-size: 12px;
-      color: var(--text-muted);
-    }
-
-    .day-badge {
-      font-size: 11px;
-      background: #ffe3d1;
       color: #d96b27;
-      padding: 2px 6px;
-      border-radius: 4px;
+    }
+
+    .modal-footer {
+      margin-top: 16px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-cancel {
+      background: #e0e0e0;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      flex: 1;
       font-weight: bold;
+      cursor: pointer;
+    }
+
+    .btn-start {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 10px;
+      flex: 2;
+      font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <!-- 主頁面 -->
-    <div id="page-main" class="page active">
-      <h1>Blind-Route 盲盒行程</h1>
-      
-      <div class="draw-section">
-        <button id="btn-draw" class="btn" style="font-size: 18px; padding: 18px;">🎲 下一站去哪裡</button>
-      </div>
+    <h1>盲盒行程抽籤器</h1>
 
-      <div class="list-title">已選擇的候選站點</div>
-      <ul id="main-selected-list" class="selected-list">
-        <!-- 動態帶入已選站點 -->
-      </ul>
-
-      <div style="margin-top: auto;">
-        <button id="btn-go-select" class="btn">GO!!</button>
-      </div>
+    <!-- 頁籤 -->
+    <div class="date-tabs">
+      <button class="tab-btn active" id="tab-725" onclick="switchTab('725')">7/25 (六)</button>
+      <button class="tab-btn" id="tab-726" onclick="switchTab('726')">7/26 (日)</button>
     </div>
 
-    <!-- 選擇地點頁面 -->
-    <div id="page-select" class="page">
-      <h2>選擇 2~3 個想去的地方吧！</h2>
-      
-      <div id="options-container" class="options-grid">
-        <!-- 動態帶入分類選項 -->
-      </div>
+    <!-- 行程列表 -->
+    <div id="timeline-container" class="timeline"></div>
 
-      <div style="margin-top: auto;">
-        <button id="btn-confirm-select" class="btn">START</button>
+    <!-- 抽籤按鈕 -->
+    <button class="btn-draw" onclick="openSelectModal()">🎲 下一站去哪裡</button>
+  </div>
+
+  <!-- 選項庫 Modal -->
+  <div id="select-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">選擇 2~3 個想去的地方吧！</div>
+      <div id="options-scroll" class="options-scroll"></div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeSelectModal()">取消</button>
+        <button class="btn-start" onclick="drawFromSelection()">START 開始抽籤</button>
       </div>
     </div>
   </div>
 
   <script>
-    // 景點與店家資料庫 (包含營業時間與地圖連結)
-    const locationsData = [
-      {
-        id: "1",
-        category: "景點",
-        name: "故宮南院",
-        mapUrl: "https://maps.app.goo.gl/oZZ8SVMHhxhwtmtK6",
-        satHours: "09:00–18:00",
-        sunHours: "09:00–18:00"
-      },
-      {
-        id: "2",
-        category: "咖啡廳",
-        name: "明明",
-        mapUrl: "https://maps.app.goo.gl/KbW8oR5vmdqJpLkH8",
-        satHours: "13:00–19:00",
-        sunHours: "13:00–19:00"
-      },
-      {
-        id: "3",
-        category: "咖啡廳",
-        name: "曙光咖啡",
-        mapUrl: "https://maps.app.goo.gl/tYhBm1HPVBAndt2S7",
-        satHours: "10:00–18:00",
-        sunHours: "10:00–18:00"
-      },
-      {
-        id: "4",
-        category: "美食／小吃",
-        name: "崇文涼麵",
-        mapUrl: "https://maps.app.goo.gl/KZcHrdTbtw6DD3v76",
-        satHours: "10:30–18:30",
-        sunHours: "10:30–18:30"
-      },
-      {
-        id: "5",
-        category: "美食／小吃",
-        name: "吳記排骨酥",
-        mapUrl: "https://maps.app.goo.gl/dAHTaJPMU2HDDmrZ6",
-        satHours: "16:00–23:00",
-        sunHours: "16:00–23:00"
-      }
-    ];
+    // 店家與地點資料庫 (分類明確)
+    const placeDB = {
+      "正餐": [
+        { name: "林聰明沙鍋魚頭", map: "https://maps.app.goo.gl/" },
+        { name: "崇文涼麵", map: "https://maps.app.goo.gl/KZcHrdTbtw6DD3v76" }
+      ],
+      "咖啡廳": [
+        { name: "明明", map: "https://maps.app.goo.gl/KbW8oR5vmdqJpLkH8" },
+        { name: "曙光咖啡", map: "https://maps.app.goo.gl/tYhBm1HPVBAndt2S7" },
+        { name: "新華美西裝社", map: "https://maps.app.goo.gl/" }
+      ],
+      "點心": [
+        { name: "仁芝初", map: "https://maps.app.goo.gl/" },
+        { name: "吳記排骨酥", map: "https://maps.app.goo.gl/dAHTaJPMU2HDDmrZ6" }
+      ],
+      "飲料": [
+        { name: "榮興", map: "https://maps.app.goo.gl/" },
+        { name: "韻沏好", map: "https://maps.app.goo.gl/" },
+        { name: "穀壹", map: "https://maps.app.goo.gl/" },
+        { name: "新庄紅茶", map: "https://maps.app.goo.gl/" }
+      ],
+      "逛街": [
+        { name: "小獵犬", map: "https://maps.app.goo.gl/" },
+        { name: "JxAcces", map: "https://maps.app.goo.gl/" }
+      ]
+    };
 
-    // 當前選擇的 ID 陣列
-    let selectedIds = ["1", "2", "3"];
+    // 行程狀態紀錄
+    let currentDay = "725";
+    let routes = {
+      "725": [
+        { tag: "起點", name: "13:30 渝川", map: "https://maps.app.goo.gl/" }
+      ],
+      "726": [
+        { tag: "起點", name: "11:00 海森", map: "https://maps.app.goo.gl/" }
+      ]
+    };
 
-    // 判斷今天是星期六還是星期日（預設顯示六或日）
-    function getTodayDayText() {
-      const day = new Date().getDay();
-      return day === 0 ? "星期日" : "星期六"; // 預設非週日就顯示週六
-    }
+    let tempSelected = []; // 暫存使用者勾選的地點
 
-    function getHoursByDay(item) {
-      const day = new Date().getDay();
-      return day === 0 ? item.sunHours : item.satHours;
-    }
-
-    // 渲染主頁面選單
-    function renderMainList() {
-      const listEl = document.getElementById("main-selected-list");
-      listEl.innerHTML = "";
-
-      if (selectedIds.length === 0) {
-        listEl.innerHTML = `<li style="text-align:center; color:var(--text-muted); padding:20px;">目前沒有選擇任何站點，請點擊 GO!! 挑選。</li>`;
-        return;
-      }
-
-      const dayText = getTodayDayText();
-
-      selectedIds.forEach(id => {
-        const item = locationsData.find(loc => loc.id === id);
-        if (!item) return;
-
-        const li = document.createElement("li");
-        li.className = "selected-item";
-        li.innerHTML = `
-          <div class="item-info">
-            <span class="item-name">${item.name}</span>
-            <span class="item-hours">${dayText}營業時間：${getHoursByDay(item)}</span>
-          </div>
-          <div class="item-actions">
-            <a href="${item.mapUrl}" target="_blank" class="btn-small btn-nav">Google maps 導航</a>
-            <button class="btn-small btn-delete" onclick="deleteItem('${item.id}')">刪除</button>
-          </div>
-        `;
-        listEl.appendChild(li);
-      });
-    }
-
-    // 刪除單一站點
-    function deleteItem(id) {
-      selectedIds = selectedIds.filter(itemId => itemId !== id);
-      renderMainList();
-    }
-
-    // 渲染選擇頁面 (分門別類)
-    function renderSelectOptions() {
-      const container = document.getElementById("options-container");
+    // 渲染當天行程
+    function renderTimeline() {
+      const container = document.getElementById("timeline-container");
       container.innerHTML = "";
 
-      // 依類別分組
-      const categories = [...new Set(locationsData.map(item => item.category))];
-      const dayText = getTodayDayText();
+      let list = [...routes[currentDay]];
+      
+      // 7/26 結尾固定有「東石海之夏」
+      if (currentDay === "726") {
+        list.push({ tag: "終點", name: "東石海之夏", map: "https://maps.app.goo.gl/" });
+      }
 
-      categories.forEach(cat => {
-        const catTitle = document.createElement("div");
-        catTitle.className = "category-title";
-        catTitle.textContent = cat;
-        container.appendChild(catTitle);
-
-        const items = locationsData.filter(item => item.category === cat);
-        items.forEach(item => {
-          const isSelected = selectedIds.includes(item.id);
-          const card = document.createElement("div");
-          card.className = `option-card ${isSelected ? 'selected' : ''}`;
-          card.onclick = () => toggleSelect(item.id, card);
-
-          card.innerHTML = `
-            <div class="option-header">
-              <span class="option-name">${item.name}</span>
-              <span class="day-badge">${dayText}</span>
-            </div>
-            <div class="option-desc">營業時間：${getHoursByDay(item)}</div>
-          `;
-          container.appendChild(card);
-        });
+      list.forEach((item, index) => {
+        const node = document.createElement("div");
+        node.className = "node";
+        node.innerHTML = `
+          <div>
+            <span class="node-tag">${item.tag || '站點 ' + index}</span>
+            <span class="node-title">${item.name}</span>
+          </div>
+          <a href="${item.map}" target="_blank" class="btn-map">Google maps 導航</a>
+        `;
+        container.appendChild(node);
       });
     }
 
-    // 切換選取狀態
-    function toggleSelect(id, cardEl) {
-      if (selectedIds.includes(id)) {
-        selectedIds = selectedIds.filter(i => i !== id);
-        cardEl.classList.remove("selected");
-      } else {
-        selectedIds.push(id);
-        cardEl.classList.add("selected");
-      }
+    // 切換日期
+    function switchTab(day) {
+      currentDay = day;
+      document.getElementById("tab-725").classList.toggle("active", day === '725');
+      document.getElementById("tab-726").classList.toggle("active", day === '726');
+      renderTimeline();
     }
 
-    // 頁面切換
-    document.getElementById("btn-go-select").onclick = () => {
-      renderSelectOptions();
-      document.getElementById("page-main").classList.remove("active");
-      document.getElementById("page-select").classList.add("active");
-    };
+    // 打開選擇 Modal 並渲染分類庫
+    function openSelectModal() {
+      tempSelected = [];
+      const scrollArea = document.getElementById("options-scroll");
+      scrollArea.innerHTML = "";
 
-    document.getElementById("btn-confirm-select").onclick = () => {
-      renderMainList();
-      document.getElementById("page-select").classList.remove("active");
-      document.getElementById("page-main").classList.add("active");
-    };
+      for (const [cat, places] of Object.entries(placeDB)) {
+        const catBlock = document.createElement("div");
+        catBlock.innerHTML = `<div class="cat-title">${cat}</div>`;
+        
+        const grid = document.createElement("div");
+        grid.className = "option-grid";
 
-    // 隨機抽籤功能
-    document.getElementById("btn-draw").onclick = () => {
-      if (selectedIds.length === 0) {
-        alert("請先點擊 GO!! 選擇至少一個站點喔！");
+        places.forEach(p => {
+          const card = document.createElement("div");
+          card.className = "option-card";
+          card.innerText = p.name;
+          card.onclick = () => {
+            if (tempSelected.includes(p)) {
+              tempSelected = tempSelected.filter(item => item !== p);
+              card.classList.remove("selected");
+            } else {
+              tempSelected.push(p);
+              card.classList.add("selected");
+            }
+          };
+          grid.appendChild(card);
+        });
+
+        catBlock.appendChild(grid);
+        scrollArea.appendChild(catBlock);
+      }
+
+      document.getElementById("select-modal").classList.add("active");
+    }
+
+    function closeSelectModal() {
+      document.getElementById("select-modal").classList.remove("active");
+    }
+
+    // 從勾選項目中隨機抽籤
+    function drawFromSelection() {
+      if (tempSelected.length < 2 || tempSelected.length > 3) {
+        alert("請選擇 2~3 個想去的地方再進行抽籤喔！");
         return;
       }
-      const randomIndex = Math.floor(Math.random() * selectedIds.length);
-      const selectedId = selectedIds[randomIndex];
-      const selectedLocation = locationsData.find(loc => loc.id === selectedId);
 
-      alert(`🎲 下一站抽中了：【${selectedLocation.name}】！`);
-    };
+      const winner = tempSelected[Math.floor(Math.random() * tempSelected.length)];
+      alert(`🎲 恭喜抽中：【${winner.name}】！已為你加入行程！`);
 
-    // 初始化
-    renderMainList();
+      // 加入行程
+      routes[currentDay].push({
+        tag: "途經",
+        name: winner.name,
+        map: winner.map
+      });
+
+      closeSelectModal();
+      renderTimeline();
+    }
+
+    // 預設初始化
+    renderTimeline();
   </script>
 </body>
 </html>
