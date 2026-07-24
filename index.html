@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>下一站去哪裡？一番賞抽籤</title>
+  <style>
+    :root {
+      --primary: #ff4757;
+      --bg: #f1f2f6;
+      --card-bg: #ffffff;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      color: #2f3542;
+      font-size: 1.5rem;
+      margin-bottom: 5px;
+    }
+
+    p.subtitle {
+      color: #747d8c;
+      font-size: 0.9rem;
+      margin-top: 0;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(255, 71, 87, 0.3);
+      transition: transform 0.1s, background-color 0.2s;
+      margin-bottom: 25px;
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    /* 籤盒區域 */
+    .ticket-container {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    /* 一番賞籤卡 */
+    .ticket {
+      width: 100px;
+      height: 140px;
+      background: linear-gradient(135deg, #ff6b81, #ff4757);
+      border: 3px solid #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+      transition: transform 0.3s, box-shadow 0.3s;
+      user-select: none;
+    }
+
+    .ticket:hover {
+      transform: translateY(-5px);
+    }
+
+    .ticket .label {
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    .ticket .hint {
+      font-size: 0.75rem;
+      opacity: 0.8;
+      margin-top: 8px;
+    }
+
+    /* 抽中/翻牌後的樣式 */
+    .ticket.opened {
+      background: #ffffff;
+      color: #2f3542;
+      border: 3px solid #2ed573;
+      transform: scale(1.05);
+      cursor: default;
+    }
+
+    /* 未被選中的籤變暗 */
+    .ticket.disabled {
+      opacity: 0.4;
+      filter: grayscale(80%);
+      cursor: not-allowed;
+      transform: scale(0.95);
+    }
+
+    /* 結果彈窗/卡片 */
+    .result-card {
+      margin-top: 25px;
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      text-align: center;
+      width: 100%;
+      max-width: 320px;
+      display: none;
+      box-sizing: border-box;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card h2 {
+      margin: 0 0 10px 0;
+      color: #ff4757;
+      font-size: 1.4rem;
+    }
+
+    .result-card p {
+      color: #57606f;
+      margin: 5px 0 15px 0;
+    }
+
+    .map-btn {
+      display: inline-block;
+      background-color: #1e90ff;
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎫 命運一番賞</h1>
+  <p class="subtitle">先生成候選籤，再叫朋友親自手動選一張！</p>
+
+  <button class="btn" onclick="prepareTickets()">🎲 重新抽 3 個地點放入籤盒</button>
+
+  <!-- 籤盒區域 -->
+  <div class="ticket-container" id="ticketContainer">
+    <!-- 籤牌會由 JS 動態產生 -->
+  </div>
+
+  <!-- 揭曉結果區 -->
+  <div class="result-card" id="resultCard">
+    <span style="font-size: 2rem;">🎉</span>
+    <h2 id="placeName">景點名稱</h2>
+    <p id="placeCategory">類別</p>
+    <a id="mapLink" href="#" target="_blank" class="map-btn">📍 開啟 Google Maps 出發</a>
+  </div>
+
+  <script>
+    // 1. 你的景點資料庫（隨時可以在這裡增加地點）
+    const pool = [
+      { name: "九份老街", category: "🍡 美食 / 景觀", map: "https://www.google.com/maps/search/?api=1&query=九份老街" },
+      { name: "中山站商圈", category: "🛍️ 逛街 / 咖啡廳", map: "https://www.google.com/maps/search/?api=1&query=捷運中山站" },
+      { name: "象山六巨石", category: "⛰️ 戶外 / 看夜景", map: "https://www.google.com/maps/search/?api=1&query=象山步道" },
+      { name: "華山文創園區", category: "🎨 展覽 / 散步", map: "https://www.google.com/maps/search/?api=1&query=華山1914文化創意產業園區" },
+      { name: "松山文創園區", category: "☕ 誠品 / 逛街", map: "https://www.google.com/maps/search/?api=1&query=松山文創園區" },
+      { name: "淡水漁人碼頭", category: "🌅 夕陽 / 海邊", map: "https://www.google.com/maps/search/?api=1&query=淡水漁人碼頭" }
+    ];
+
+    let currentCandidates = [];
+    let isOpened = false;
+
+    // 準備一番賞籤盒 (隨機抓 3 個並洗牌)
+    function prepareTickets() {
+      isOpened = false;
+      document.getElementById('resultCard').style.display = 'none';
+
+      // 隨機從水池抓 3 個不重複景點
+      const shuffled = [...pool].sort(() => 0.5 - Math.random());
+      currentCandidates = shuffled.slice(0, 3);
+
+      const container = document.getElementById('ticketContainer');
+      container.innerHTML = '';
+
+      // 渲染 3 張蓋著的籤
+      currentCandidates.forEach((item, index) => {
+        const ticket = document.createElement('div');
+        ticket.className = 'ticket';
+        ticket.id = `ticket-${index}`;
+        ticket.onclick = () => openTicket(index);
+        
+        ticket.innerHTML = `
+          <div class="label">籤 ${String.fromCharCode(65 + index)}</div>
+          <div class="hint">點擊撕開</div>
+        `;
+        container.appendChild(ticket);
+      });
+    }
+
+    // 點擊撕開一番賞
+    function openTicket(selectedIndex) {
+      if (isOpened) return; // 抽過了就不能再點
+      isOpened = true;
+
+      const chosen = currentCandidates[selectedIndex];
+
+      // 處理卡片視覺變化
+      currentCandidates.forEach((_, index) => {
+        const el = document.getElementById(`ticket-${index}`);
+        if (index === selectedIndex) {
+          el.classList.add('opened');
+          el.innerHTML = `
+            <div style="font-size: 0.8rem; color: #2ed573;">中獎！</div>
+            <div style="font-size: 1.1rem; margin-top: 5px;">${chosen.name}</div>
+          `;
+        } else {
+          el.classList.add('disabled');
+        }
+      });
+
+      // 顯示底部結果區
+      setTimeout(() => {
+        document.getElementById('placeName').innerText = chosen.name;
+        document.getElementById('placeCategory').innerText = chosen.category;
+        document.getElementById('mapLink').href = chosen.map;
+        document.getElementById('resultCard').style.display = 'block';
+      }, 300);
+    }
+
+    // 初次載入自動生成
+    prepareTickets();
+  </script>
+</body>
+</html>
