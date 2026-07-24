@@ -9,19 +9,24 @@
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #FFF4E6;
-    --bg-soft: #FFEAD2;
-    --card: #FFFBF6;
-    --ink: #5B3A29;
-    --ink-soft: #8C6A54;
-    --accent: #F0975D;
-    --accent-deep: #D97A3D;
-    --accent-soft: #F7C59F;
-    --line: #F0D9BE;
-    --danger: #C97B63;
-    --wood-a: #E8B27C;
-    --wood-b: #D89B5C;
-    --shadow: 0 6px 18px rgba(140, 90, 50, 0.12);
+    --wall: #F9F6EF;
+    --sofa: #85C3E8;
+    --apple: #8C0503;
+    --lamp: #081530;
+    --wine: #4A2D18;
+
+    --bg: var(--wall);
+    --card: #FFFFFF;
+    --ink: var(--lamp);
+    --ink-soft: #7C8797;
+    --accent: var(--lamp);
+    --pop: var(--apple);
+    --secondary: var(--sofa);
+    --secondary-soft: #EAF4FC;
+    --warm: var(--wine);
+    --warm-soft: #F1E6DD;
+    --line: #EDE6D8;
+    --shadow: 0 4px 14px rgba(8, 21, 48, 0.08);
   }
   *{ box-sizing:border-box; }
   html,body{ margin:0; padding:0; }
@@ -36,7 +41,7 @@
 
   header{
     padding: 28px 20px 18px;
-    background: linear-gradient(180deg, var(--bg-soft), var(--bg));
+    background: var(--bg);
     border-bottom: 1px solid var(--line);
   }
   header h1{
@@ -45,6 +50,7 @@
     font-size: 26px;
     margin: 0 0 4px;
     letter-spacing: 0.02em;
+    color: var(--ink);
   }
   header p{
     margin:0;
@@ -55,11 +61,11 @@
   .day-tabs{
     display:flex;
     gap: 8px;
-    margin-top: 18px;
+    margin-top: 16px;
   }
   .day-tab{
     flex:1;
-    border: 1px solid var(--line);
+    border: 1.5px solid var(--line);
     background: var(--card);
     color: var(--ink-soft);
     font-family: 'Noto Serif TC', serif;
@@ -68,110 +74,123 @@
     padding: 10px 0;
     border-radius: 12px;
     cursor:pointer;
-    transition: all .2s ease;
+    transition: transform .15s ease;
   }
   .day-tab.active{
     background: var(--accent);
     color: #fff;
-    border-color: var(--accent-deep);
-    box-shadow: var(--shadow);
+    border-color: var(--accent);
+    transform: scale(1.02);
   }
 
-  main{ padding: 18px 16px 8px; max-width: 480px; margin: 0 auto; }
+  main{ padding: 20px 16px 8px; max-width: 480px; margin: 0 auto; }
 
-  .timeline{ position:relative; padding-left: 6px; }
+  .timeline{ position:relative; padding-left: 24px; }
+  .timeline::before{
+    content:'';
+    position:absolute;
+    left: 4px; top: 8px; bottom: 8px;
+    width: 2px;
+    background: var(--secondary);
+    opacity: 0.5;
+  }
+
+  .tl-item{ position:relative; margin-bottom: 18px; }
+  .tl-dot{
+    position:absolute;
+    left: -22px; top: 16px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--secondary);
+    border: 2px solid var(--bg);
+  }
+  .tl-dot.route{ background: var(--pop); }
 
   .stop-card{
-    position:relative;
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: 16px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
+    border-radius: 18px;
+    padding: 14px 16px 16px;
     box-shadow: var(--shadow);
+    transition: transform .15s ease;
   }
-  .stop-card.fixed{
-    background: linear-gradient(135deg, #FFF, var(--bg-soft));
-  }
+  .stop-card:hover{ transform: translateY(-1px); }
   .stop-top{
     display:flex;
     justify-content:space-between;
-    align-items:flex-start;
-    gap: 8px;
+    align-items:center;
+    margin-bottom: 6px;
   }
   .stop-tag{
-    display:inline-block;
-    font-size: 11px;
-    color: var(--accent-deep);
-    background: var(--accent-soft);
-    padding: 2px 8px;
-    border-radius: 999px;
-    margin-bottom: 6px;
+    display:inline-flex;
+    align-items:center;
+    gap: 6px;
+    font-size: 12px;
     font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+  .stop-tag.route{ color: #fff; background: var(--pop); }
+  .stop-tag.cat{ color: var(--ink); background: var(--secondary-soft); border: 1px solid var(--secondary-soft); }
+  .stop-time{
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--ink);
+  }
+  .stop-delete{
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor:pointer;
+    background:none;
+    border:none;
+    padding: 4px;
   }
   .stop-name{
     font-family:'Noto Serif TC', serif;
     font-weight: 700;
     font-size: 17px;
-    margin: 0 0 2px;
-  }
-  .stop-time{
-    font-size: 12px;
-    color: var(--ink-soft);
+    margin: 4px 0 2px;
+    color: var(--ink);
   }
   .stop-note{
-    font-size: 12px;
+    font-size: 12.5px;
     color: var(--ink-soft);
-    margin-top: 4px;
+    margin-bottom: 10px;
   }
-  .stop-actions{
-    display:flex;
-    gap: 10px;
-    margin-top: 10px;
-  }
-  .btn-link{
-    font-size: 12px;
-    color: var(--accent-deep);
+  .stop-map-btn{
+    display:inline-block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--ink);
+    background: var(--secondary);
     text-decoration:none;
-    border: 1px solid var(--accent-soft);
-    padding: 5px 10px;
+    padding: 7px 14px;
     border-radius: 999px;
-    background: #fff;
+    transition: transform .12s ease;
   }
-  .btn-delete{
-    font-size: 12px;
-    color: var(--danger);
-    border: 1px solid #EAC7BB;
-    background:#fff;
-    padding: 5px 10px;
-    border-radius: 999px;
-    cursor:pointer;
-  }
-
-  .connector{
-    display:flex;
-    justify-content:center;
-    margin: -4px 0 10px;
-  }
-  .connector span{
-    width:2px; height: 20px;
-    background: var(--line);
-  }
+  .stop-map-btn:active{ transform: scale(0.95); }
 
   .next-stop-btn{
     width:100%;
     padding: 16px;
-    border-radius: 16px;
-    border: 2px dashed var(--accent-soft);
-    background: rgba(255,255,255,0.5);
-    color: var(--accent-deep);
+    border-radius: 18px;
+    border: 2px dashed var(--secondary);
+    background: var(--card);
+    color: var(--accent);
     font-family: 'Noto Serif TC', serif;
     font-weight: 700;
     font-size: 16px;
     cursor:pointer;
-    margin-bottom: 14px;
+    margin-bottom: 6px;
+    transition: transform .15s ease;
   }
-  .next-stop-btn:active{ transform: scale(0.98); }
+  .next-stop-btn:active{ transform: scale(0.97); }
+  .next-stop-btn:hover .dice{ display:inline-block; animation: wobble .5s ease; }
+  @keyframes wobble{
+    0%,100%{ transform: rotate(0deg); }
+    25%{ transform: rotate(-12deg); }
+    75%{ transform: rotate(12deg); }
+  }
 
   .empty-hint{
     text-align:center;
@@ -183,7 +202,7 @@
   /* Modal */
   .modal-overlay{
     position: fixed; inset:0;
-    background: rgba(90, 58, 41, 0.35);
+    background: rgba(58, 36, 24, 0.35);
     display:none;
     align-items:flex-end;
     justify-content:center;
@@ -198,7 +217,6 @@
     overflow-y: auto;
     border-radius: 22px 22px 0 0;
     padding: 20px 18px 28px;
-    box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
   }
   .modal-header{
     display:flex;
@@ -230,7 +248,7 @@
   .category-label{
     font-size: 13px;
     font-weight: 700;
-    color: var(--accent-deep);
+    color: var(--accent);
     margin-bottom: 8px;
     display:flex;
     align-items:center;
@@ -239,7 +257,7 @@
   .category-label::before{
     content:'';
     width: 6px; height: 6px;
-    background: var(--accent);
+    background: currentColor;
     border-radius: 50%;
     display:inline-block;
   }
@@ -254,11 +272,10 @@
     padding: 10px 14px;
     margin-bottom: 8px;
     cursor:pointer;
-    transition: all .15s ease;
   }
   .option-item.selected{
-    border-color: var(--accent);
-    background: var(--accent-soft);
+    border-color: var(--warm);
+    background: var(--warm-soft);
   }
   .option-item.disabled{
     opacity: 0.4;
@@ -270,7 +287,7 @@
   .option-check{
     width: 20px; height: 20px;
     border-radius: 50%;
-    border: 2px solid var(--accent-soft);
+    border: 2px solid var(--secondary);
     flex-shrink:0;
     margin-left: 10px;
     display:flex;
@@ -278,8 +295,8 @@
     justify-content:center;
   }
   .option-item.selected .option-check{
-    background: var(--accent);
-    border-color: var(--accent-deep);
+    background: var(--warm);
+    border-color: var(--warm);
   }
   .option-item.selected .option-check::after{
     content:'';
@@ -301,14 +318,14 @@
     color: var(--ink-soft);
     margin-bottom: 10px;
   }
-  .status-text b{ color: var(--accent-deep); }
+  .status-text b{ color: var(--accent); }
 
   .primary-btn{
     width:100%;
     padding: 14px;
     border-radius: 14px;
     border:none;
-    background: var(--accent);
+    background: var(--pop);
     color:#fff;
     font-weight: 700;
     font-size: 15px;
@@ -316,20 +333,9 @@
     cursor:pointer;
   }
   .primary-btn:disabled{
-    background: var(--accent-soft);
+    background: var(--secondary);
     color: #fff;
     cursor:not-allowed;
-  }
-  .ghost-btn{
-    width:100%;
-    padding: 12px;
-    border-radius: 14px;
-    border: 1px solid var(--line);
-    background: transparent;
-    color: var(--ink-soft);
-    font-size: 14px;
-    cursor:pointer;
-    margin-top: 8px;
   }
 
   /* Draw screen */
@@ -337,36 +343,26 @@
     text-align:center;
     padding: 10px 0 6px;
   }
-  .draw-instruction{
-    font-size: 14px;
-    color: var(--ink);
-    margin-bottom: 6px;
-    font-weight: 700;
-  }
-  .draw-sub{
-    font-size: 12.5px;
-    color: var(--ink-soft);
-    margin-bottom: 22px;
-  }
   .sticks-row{
     display:flex;
     justify-content:center;
     gap: 14px;
-    margin: 10px 0 24px;
-    min-height: 180px;
+    margin: 10px 0 20px;
+    min-height: 150px;
     align-items:flex-end;
   }
   .stick{
-    width: 54px;
-    height: 170px;
+    width: 56px;
+    height: 150px;
     border-radius: 10px 10px 4px 4px;
-    background: linear-gradient(180deg, var(--wood-a), var(--wood-b));
-    border: 1px solid #C98A4E;
-    box-shadow: 0 6px 14px rgba(140,90,50,0.25);
+    background: var(--secondary);
+    border: 1.5px solid var(--secondary);
     position: relative;
     cursor: pointer;
-    perspective: 600px;
     flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
   }
   .stick.shuffling{
     animation: shuffle-move 0.9s ease-in-out infinite;
@@ -378,52 +374,39 @@
     75%{ transform: translateY(-6px) rotate(-2deg); }
     100%{ transform: translateY(0) rotate(0deg); }
   }
-  .stick::before{
-    content:'';
-    position:absolute;
-    top: 10px; left: 50%;
-    transform: translateX(-50%);
-    width: 4px; height: 4px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.6);
-  }
   .stick .stick-label{
-    position:absolute;
-    top: 50%; left:50%;
-    transform: translate(-50%,-50%);
     writing-mode: vertical-rl;
-    color: rgba(255,255,255,0.85);
+    color: var(--ink);
     font-family:'Noto Serif TC', serif;
     font-weight:700;
-    font-size: 13px;
-    letter-spacing: 2px;
+    font-size: 15px;
+    letter-spacing: 3px;
   }
   .stick.revealed{
-    background: var(--card);
-    border-color: var(--accent);
-    cursor: default;
+    background: var(--pop);
+    border-color: var(--pop);
+    animation: pop-in .3s ease;
   }
-  .stick.revealed .stick-label{ display:none; }
+  @keyframes pop-in{
+    0%{ transform: scale(0.85); }
+    60%{ transform: scale(1.06); }
+    100%{ transform: scale(1); }
+  }
+  .stick.revealed .stick-mark{
+    color: #fff;
+    font-size: 26px;
+    font-weight: 900;
+  }
   .stick.dimmed{
-    opacity: 0.35;
+    opacity: 0.3;
     cursor: default;
-  }
-  .reveal-name{
-    writing-mode: initial;
-    font-family:'Noto Serif TC', serif;
-    color: var(--accent-deep);
-    font-weight: 700;
-    font-size: 13px;
-    padding: 8px 6px;
-    text-align:center;
-    word-break: keep-all;
   }
 
   .result-box{
     background: var(--card);
-    border: 1.5px solid var(--accent-soft);
+    border: 1.5px solid var(--line);
     border-radius: 16px;
-    padding: 16px;
+    padding: 18px 16px;
     margin-bottom: 14px;
     text-align:center;
     display:none;
@@ -439,6 +422,12 @@
     font-weight: 900;
     font-size: 22px;
     color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .result-hours{
+    font-size: 12.5px;
+    color: var(--accent);
+    font-weight: 700;
   }
 
   .footer-note{
@@ -467,7 +456,7 @@
 </main>
 
 <div class="footer-note">
-  營業時間資訊整理自網路公開資料，出發前建議再次確認店家最新公告。
+  營業時間以 Google Maps 店家頁面公告為準，出發前建議再次確認。
 </div>
 
 <!-- Modal -->
@@ -489,15 +478,15 @@ const optionsLibrary = [
   {
     key: 'cafe', label: '咖啡廳',
     items: [
-      { id:'mingming', name:'明明MingMing', mapUrl:'https://maps.app.goo.gl/KbW8oR5vmdqJpLkH8', hours:{ sat:'營業時間依店家 IG／FB 公告', sun:'營業時間依店家 IG／FB 公告' } },
-      { id:'shuguang', name:'曙光珈琲', mapUrl:'https://maps.app.goo.gl/tYhBm1HPVBAndt2S7', hours:{ sat:'詳見店家粉專公告', sun:'詳見店家粉專公告' } },
+      { id:'mingming', name:'明明MingMing', mapUrl:'https://maps.app.goo.gl/KbW8oR5vmdqJpLkH8', hours:{ sat:'依店家 IG／FB 公告', sun:'依店家 IG／FB 公告' } },
+      { id:'shuguang', name:'曙光珈琲', mapUrl:'https://maps.app.goo.gl/tYhBm1HPVBAndt2S7', hours:{ sat:'詳見 Google Maps 店家頁面', sun:'詳見 Google Maps 店家頁面' } },
       { id:'xinhuamei', name:'新華美西裝社', mapQuery:'新華美西裝社 嘉義市成仁街80號', hours:{ sat:'11:00–17:30', sun:'11:00–17:30' } },
     ]
   },
   {
     key: 'snack', label: '點心',
     items: [
-      { id:'renzhichu', name:'仁芝初', mapQuery:'仁芝初 嘉義', hours:{ sat:'詳見店家最新公告', sun:'詳見店家最新公告' } },
+      { id:'renzhichu', name:'仁芝初', mapQuery:'仁芝初 嘉義', hours:{ sat:'詳見 Google Maps 店家頁面', sun:'詳見 Google Maps 店家頁面' } },
       { id:'wuji', name:'吳記排骨酥', mapUrl:'https://maps.app.goo.gl/dAHTaJPMU2HDDmrZ6', hours:{ sat:'16:00－翌日 00:00', sun:'16:00－翌日 00:00' } },
     ]
   },
@@ -506,14 +495,14 @@ const optionsLibrary = [
     items: [
       { id:'rongxing', name:'榮興茶行', mapQuery:'榮興茶行 嘉義市民族路601號', hours:{ sat:'10:00–21:00', sun:'10:00–21:00' } },
       { id:'yunqihao', name:'韻沏好', mapQuery:'韻沏好 嘉義市民權路422號', hours:{ sat:'10:00–21:00', sun:'10:00–21:00' } },
-      { id:'guyi', name:'穀壹', mapQuery:'穀壹綠豆沙專門店 嘉義', hours:{ sat:'詳見店家粉專公告', sun:'詳見店家粉專公告' } },
+      { id:'guyi', name:'穀壹', mapQuery:'穀壹綠豆沙專門店 嘉義', hours:{ sat:'詳見 Google Maps 店家頁面', sun:'詳見 Google Maps 店家頁面' } },
       { id:'xinzhuang', name:'新庄紅茶', mapQuery:'新庄紅茶 嘉義市新庄街98號', hours:{ sat:'08:00–22:00', sun:'08:00–22:00' } },
     ]
   },
   {
     key: 'shop', label: '逛街',
     items: [
-      { id:'hunter', name:'小獵犬商號', mapQuery:'Hunter Goods 小獵犬商號 嘉義', hours:{ sat:'詳見店家粉專公告', sun:'詳見店家粉專公告' } },
+      { id:'hunter', name:'小獵犬商號', mapQuery:'Hunter Goods 小獵犬商號 嘉義', hours:{ sat:'詳見 Google Maps 店家頁面', sun:'詳見 Google Maps 店家頁面' } },
       { id:'jxacces', name:'JxAcces', mapQuery:'JxAcces 嘉義市中山路130號', hours:{ sat:'14:30–21:00', sun:'14:30–21:00' } },
     ]
   },
@@ -523,6 +512,12 @@ const optionsLibrary = [
       { id:'wanglaishan', name:'旺萊山', mapQuery:'旺萊山鳳梨文化園區 嘉義', hours:{ sat:'09:00–18:00', sun:'09:00–18:00' } },
       { id:'meme', name:'咩咩上樹萌寵樂園', mapQuery:'咩咩上樹萌寵樂園 嘉義', hours:{ sat:'09:00–17:00', sun:'09:00–17:00' } },
       { id:'npm', name:'故宮南院', mapUrl:'https://maps.app.goo.gl/oZZ8SVMHhxhwtmtK6', hours:{ sat:'09:00–18:00', sun:'09:00–18:00' } },
+    ]
+  },
+  {
+    key: 'souvenir', label: '伴手禮',
+    items: [
+      { id:'apan', name:'阿潘肉包', mapQuery:'阿潘肉包 伴手禮 中正店 嘉義市中正路345號', hours:{ sat:'11:00–20:30', sun:'11:00–20:30' } },
     ]
   },
 ];
@@ -535,6 +530,13 @@ function findOptionById(id){
   return null;
 }
 
+function categoryLabelForId(id){
+  for(const cat of optionsLibrary){
+    if(cat.items.find(i=>i.id===id)) return cat.label;
+  }
+  return '';
+}
+
 function mapLinkFor(item){
   if(item.mapUrl) return item.mapUrl;
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(item.mapQuery || item.name);
@@ -542,97 +544,92 @@ function mapLinkFor(item){
 
 /* ---------------- State ---------------- */
 
+const STORAGE_KEY = 'chiayiTripState_v3';
 let currentDay = 'day1';
+let idCounter = 1;
 
 const days = {
   day1: {
     label: '7/25', weekday:'週六', hoursKey:'sat',
-    fixedStart: { name:'渝川', time:'13:30' },
+    fixedStart: { name:'渝川', time:'13:30', note:'吃午餐、粗花' },
     fixedEnd: null,
     stops: []
   },
   day2: {
     label: '7/26', weekday:'週日', hoursKey:'sun',
-    fixedStart: { name:'海森', time:'11:00' },
+    fixedStart: { name:'海森', time:'11:00', note:'吃午餐、粗花' },
     fixedEnd: { name:'東石海之夏', note:'東石漁人碼頭．海上煙火約 19:30 施放' },
     stops: []
   }
 };
 
-let idCounter = 1;
+function saveState(){
+  const state = {
+    idCounter,
+    days: {
+      day1: { fixedStartDeleted: !days.day1.fixedStart, fixedEndDeleted: !days.day1.fixedEnd, stops: days.day1.stops },
+      day2: { fixedStartDeleted: !days.day2.fixedStart, fixedEndDeleted: !days.day2.fixedEnd, stops: days.day2.stops }
+    }
+  };
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){ console.error('save failed', e); }
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return;
+    const state = JSON.parse(raw);
+    if(typeof state.idCounter === 'number') idCounter = state.idCounter;
+    if(state.days){
+      ['day1','day2'].forEach(key=>{
+        if(state.days[key]){
+          if(state.days[key].fixedStartDeleted) days[key].fixedStart = null;
+          if(state.days[key].fixedEndDeleted) days[key].fixedEnd = null;
+          days[key].stops = state.days[key].stops || [];
+        }
+      });
+    }
+  }catch(e){ console.error('load failed', e); }
+}
 
 /* ---------------- Render itinerary ---------------- */
 
-function connectorHtml(){
-  return `<div class="connector"><span></span></div>`;
-}
-
-function stopCardHtml({ name, time, note, fixed, mapLink, deleteTarget }){
-  const tag = fixed ? '<span class="stop-tag">固定站點</span>' : '<span class="stop-tag">行程站點</span>';
-  const timeHtml = time ? `<div class="stop-time">${time}</div>` : '';
-  const noteHtml = note ? `<div class="stop-note">${note}</div>` : '';
-  const link = mapLink || 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(name);
-  return `
-    <div class="stop-card ${fixed ? 'fixed' : ''}">
-      <div class="stop-top">
-        <div>
-          ${tag}
-          <div class="stop-name">${name}</div>
-          ${timeHtml}
-          ${noteHtml}
-        </div>
-      </div>
-      <div class="stop-actions">
-        <a class="btn-link" href="${link}" target="_blank" rel="noopener">Google Maps 導航</a>
-        <button class="btn-delete" onclick='deleteStop(${JSON.stringify(deleteTarget)})'>刪除</button>
-      </div>
-    </div>
-  `;
-}
-
-function deleteStop(target){
-  const day = days[target.day];
-  if(target.type === 'fixedStart'){ day.fixedStart = null; }
-  else if(target.type === 'fixedEnd'){ day.fixedEnd = null; }
-  else if(target.type === 'stop'){ day.stops = day.stops.filter(s=>s.uid !== target.id); }
-  renderTimelineSafe();
-}
-
-// fixedStart could become null after deletion; guard render
-function renderTimelineSafe(){
+function renderTimeline(){
   const day = days[currentDay];
   const el = document.getElementById('timeline');
   let html = '';
 
   if(day.fixedStart){
-    html += stopCardHtml({
-      name: day.fixedStart.name,
+    html += tlItemHtml({
+      tagText: '起點', tagClass: 'route',
       time: day.fixedStart.time,
-      fixed: true,
+      name: day.fixedStart.name,
+      note: day.fixedStart.note || '',
+      mapLink: mapLinkFor({ mapQuery: day.fixedStart.name }),
       deleteTarget: { type:'fixedStart', day: currentDay }
     });
-    html += connectorHtml();
   }
 
   day.stops.forEach(stop=>{
-    html += stopCardHtml({
+    html += tlItemHtml({
+      tagText: stop.category || '', tagClass: 'cat',
+      time: '',
       name: stop.name,
-      note: null,
-      fixed: false,
+      note: stop.hours || '',
       mapLink: mapLinkFor(stop),
       deleteTarget: { type:'stop', day: currentDay, id: stop.uid }
     });
-    html += connectorHtml();
   });
 
-  html += `<button class="next-stop-btn" onclick="openLibrary()">🎲　下一站去哪裡</button>`;
+  html += `<button class="next-stop-btn" onclick="openLibrary()"><span class="dice">🎲</span>　下一站去哪裡</button>`;
 
   if(day.fixedEnd){
-    html += connectorHtml();
-    html += stopCardHtml({
+    html += tlItemHtml({
+      tagText: '終點', tagClass: 'route',
+      time: day.fixedEnd.time || '',
       name: day.fixedEnd.name,
-      note: day.fixedEnd.note,
-      fixed: true,
+      note: day.fixedEnd.note || '',
+      mapLink: mapLinkFor({ mapQuery: day.fixedEnd.name }),
       deleteTarget: { type:'fixedEnd', day: currentDay }
     });
   }
@@ -644,6 +641,37 @@ function renderTimelineSafe(){
   el.innerHTML = html;
 }
 
+function tlItemHtml({ tagText, tagClass, time, name, note, mapLink, deleteTarget }){
+  const tagHtml = tagText ? `<span class="stop-tag ${tagClass}">${tagText}</span>` : `<span></span>`;
+  const timeHtml = time ? `<span class="stop-time">${time}</span>` : '';
+  return `
+    <div class="tl-item">
+      <div class="tl-dot ${tagClass === 'route' ? 'route' : ''}"></div>
+      <div class="stop-card">
+        <div class="stop-top">
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${tagHtml}
+            ${timeHtml}
+          </div>
+          <button class="stop-delete" onclick='deleteStop(${JSON.stringify(deleteTarget)})'>刪除</button>
+        </div>
+        <div class="stop-name">${name}</div>
+        ${note ? `<div class="stop-note">${note}</div>` : ''}
+        <a class="stop-map-btn" href="${mapLink}" target="_blank" rel="noopener">GOOGLE MAPS 導航</a>
+      </div>
+    </div>
+  `;
+}
+
+function deleteStop(target){
+  const day = days[target.day];
+  if(target.type === 'fixedStart'){ day.fixedStart = null; }
+  else if(target.type === 'fixedEnd'){ day.fixedEnd = null; }
+  else if(target.type === 'stop'){ day.stops = day.stops.filter(s=>s.uid !== target.id); }
+  saveState();
+  renderTimeline();
+}
+
 /* ---------------- Day tabs ---------------- */
 
 document.querySelectorAll('.day-tab').forEach(btn=>{
@@ -651,7 +679,7 @@ document.querySelectorAll('.day-tab').forEach(btn=>{
     document.querySelectorAll('.day-tab').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     currentDay = btn.dataset.day;
-    renderTimelineSafe();
+    renderTimeline();
   });
 });
 
@@ -673,7 +701,6 @@ function closeModal(){
 
 function renderSelectStep(){
   const hoursKey = days[currentDay].hoursKey;
-  const dayLabel = `${days[currentDay].label}（${days[currentDay].weekday}）`;
 
   let catsHtml = '';
   optionsLibrary.forEach(cat=>{
@@ -705,10 +732,9 @@ function renderSelectStep(){
 
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-header">
-      <div class="modal-title">選項庫</div>
+      <div class="modal-title">選項清單</div>
       <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
-    <div class="modal-sub">${dayLabel}營業時間　·　先選 2～3 個候選站點，再開始抽籤</div>
     ${catsHtml}
     <div class="selection-status">
       <div class="status-text">已選 <b>${count}</b> / 最多 3 個</div>
@@ -746,12 +772,14 @@ function startShuffle(){
 }
 
 function renderDrawStep(justShuffled){
+  const hoursKey = days[currentDay].hoursKey;
+
   let sticksHtml = '';
   shuffledOptionIds.forEach((id, idx)=>{
     const isRevealed = revealedId === id;
     const isDimmed = revealedId !== null && !isRevealed;
     const inner = isRevealed
-      ? `<div class="reveal-name">${findOptionById(id).name}</div>`
+      ? `<div class="stick-mark">✓</div>`
       : `<div class="stick-label">籤</div>`;
     sticksHtml += `
       <div class="stick ${justShuffled && revealedId===null ? 'shuffling':''} ${isRevealed?'revealed':''} ${isDimmed?'dimmed':''}"
@@ -762,20 +790,19 @@ function renderDrawStep(justShuffled){
     `;
   });
 
-  const resultHtml = revealedId ? `
-    <div class="result-box show">
-      <div class="result-label">抽到的站點是</div>
-      <div class="result-name">${findOptionById(revealedId).name}</div>
-    </div>
-  ` : `<div class="result-box"></div>`;
-
-  const actionHtml = revealedId ? `
-    <button class="primary-btn" onclick="addRevealedToItinerary()">加入行程</button>
-    <button class="ghost-btn" onclick="startShuffle()">重新洗牌再抽一次</button>
-    <button class="ghost-btn" onclick="renderSelectStep()">重新選擇候選站點</button>
-  ` : `
-    <button class="ghost-btn" onclick="renderSelectStep()">重新選擇候選站點</button>
-  `;
+  let resultHtml = `<div class="result-box"></div>`;
+  let actionHtml = '';
+  if(revealedId){
+    const item = findOptionById(revealedId);
+    resultHtml = `
+      <div class="result-box show">
+        <div class="result-label">抽到的站點是</div>
+        <div class="result-name">${item.name}</div>
+        <div class="result-hours">${item.hours[hoursKey]}</div>
+      </div>
+    `;
+    actionHtml = `<button class="primary-btn" onclick="addRevealedToItinerary()">加入行程</button>`;
+  }
 
   document.getElementById('modalBody').innerHTML = `
     <div class="modal-header">
@@ -783,8 +810,6 @@ function renderDrawStep(justShuffled){
       <button class="modal-close" onclick="closeModal()">&times;</button>
     </div>
     <div class="draw-wrap">
-      <div class="draw-instruction">請把手機交給朋友</div>
-      <div class="draw-sub">看不到內容，直接點一支籤就好</div>
       <div class="sticks-row">${sticksHtml}</div>
       ${resultHtml}
       ${actionHtml}
@@ -800,19 +825,24 @@ function revealStick(id){
 
 function addRevealedToItinerary(){
   const item = findOptionById(revealedId);
+  const hoursKey = days[currentDay].hoursKey;
   const day = days[currentDay];
   day.stops.push({
     uid: idCounter++,
     name: item.name,
     mapUrl: item.mapUrl,
-    mapQuery: item.mapQuery
+    mapQuery: item.mapQuery,
+    category: categoryLabelForId(item.id),
+    hours: item.hours[hoursKey]
   });
+  saveState();
   closeModal();
-  renderTimelineSafe();
+  renderTimeline();
 }
 
 /* ---------------- Init ---------------- */
-renderTimelineSafe();
+loadState();
+renderTimeline();
 </script>
 
 </body>
